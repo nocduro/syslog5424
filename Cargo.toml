@@ -1,0 +1,6 @@
+[package]
+name = "syslog5424"
+version = "0.1.0"
+authors = ["Mackenzie Hauck <mhauck@live.ca>"]
+
+[dependencies]
