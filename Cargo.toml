@@ -3,4 +3,11 @@ name = "syslog5424"
 version = "0.1.0"
 authors = ["Mackenzie Hauck <mhauck@live.ca>"]
 
+[features]
+default = []
+slog-impl = ["chrono", "slog"]
+
 [dependencies]
+chrono = { version = "0.4", optional = true }
+slog = { version = "2.3", optional = true }
+
