@@ -23,17 +23,10 @@
 //! connection should be over TLS. However, if sending to the local RSYSLOG the normal
 //! 5424 format is likely correct(?).
 
-#[cfg(feature = "slog-impl")]
-extern crate chrono;
-#[cfg(feature = "slog-impl")]
-extern crate slog;
-
 use std::collections::HashMap;
 use std::io::{self, Write};
 
 pub mod iana;
-#[cfg(feature = "slog-impl")]
-pub mod slog_rfc5424;
 pub mod types;
 use iana::*;
 use types::*;
@@ -62,6 +55,7 @@ impl Default for WriteFormat {
 
 /// Value used when a field is optional, and not present
 pub const NILVALUE: char = '-';
+const BOM: [u8; 3] = [0xEF, 0xBB, 0xBF];
 
 /// Holds the metadata needed for formatting a RFC5424 syslog message.
 ///
@@ -322,8 +316,7 @@ impl Rfc5424 {
         if let Some(msg) = m {
             match msg {
                 Message::Text(s) => {
-                    let bom: [u8; 3] = [0xEF, 0xBB, 0xBF];
-                    writer.write_all(&bom)?;
+                    writer.write_all(&BOM)?;
                     writer.write_all(s.as_bytes())?
                 }
                 Message::Binary(s) => writer.write_all(s.as_slice())?,
@@ -338,7 +331,7 @@ mod tests {
     use super::*;
 
     #[derive(Debug)]
-    pub struct Rfc5424Message<'a> {
+    struct Rfc5424Message<'a> {
         pub severity: Severity,
         pub structured_data: Option<StructuredData<'a>>,
         pub message: Option<Message>,
@@ -360,6 +353,21 @@ mod tests {
         fn message(&self) -> Option<Message> {
             self.message.clone()
         }
+    }
+
+    /// generate a vec with the BOM added
+    /// `structured` should not end with a space
+    /// `message` should not start with a space
+    fn test_vec(structured: &str, message: Option<&str>) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend(structured.trim().as_bytes());
+
+        if let Some(s) = message {
+            out.push(' ' as u8);
+            out.extend(BOM.iter());
+            out.extend(s.trim().as_bytes());
+        }
+        out
     }
 
     #[test]
@@ -392,6 +400,102 @@ mod tests {
 
         let mut out = Vec::new();
         f.format(&mut out, msg).unwrap();
-        println!("log: {}", String::from_utf8(out).unwrap());
+        let s = String::from_utf8(out).unwrap();
+        println!("{}", s);
+        assert_eq!(String::from_utf8(
+            test_vec(r#"130 <11>1 - server1.example.com my_app_name 5445 msg_id [hello@ent_id id="alpha9" progress="complete"]"#, 
+                Some("sample message. Hello there!"))).unwrap(), s);
+    }
+
+    #[test]
+    fn message_only() {
+        let msg = Rfc5424Message {
+            severity: Severity::Notice,
+            structured_data: None,
+            message: Some(Message::Text("%% It's time to make the do-nuts.".into())),
+        };
+        let f = Rfc5424Builder::new("ent_id", Facility::Local4)
+            .app_name("myproc")
+            .unwrap()
+            .hostname("192.0.2.1")
+            .unwrap()
+            .pid("8710")
+            .unwrap()
+            .write_format(WriteFormat::RFC5424)
+            .build();
+
+        let mut out = Vec::new();
+        f.format(&mut out, msg).unwrap();
+        let s = String::from_utf8(out).unwrap();
+        println!("{}", s);
+        assert_eq!(
+            String::from_utf8(test_vec(
+                r#"<165>1 - 192.0.2.1 myproc 8710 - -"#,
+                Some("%% It's time to make the do-nuts.")
+            )).unwrap(),
+            s
+        );
+    }
+
+    #[test]
+    fn empty() {
+        let msg = Rfc5424Message {
+            severity: Severity::Debug,
+            structured_data: None,
+            message: None,
+        };
+        let f = Rfc5424Builder::new("ent_id", Facility::User).build();
+
+        let mut out = Vec::new();
+        f.format(&mut out, msg).unwrap();
+        let s = String::from_utf8(out).unwrap();
+        println!("{}", s);
+        assert_eq!(
+            String::from_utf8(test_vec(r#"<15>1 - - - - - -"#, None)).unwrap(),
+            s
+        );
+    }
+
+    #[test]
+    fn rfc_examples() {
+        let mut hmap: StructuredData = HashMap::new();
+        hmap.insert(
+            "exampleSDID",
+            vec![
+                ("iut".into(), "3".into()),
+                ("eventSource".into(), "Application".into()),
+                ("eventID".into(), "1011".into()),
+            ],
+        );
+
+        let msg = Rfc5424Message {
+            severity: Severity::Error,
+            structured_data: Some(hmap.clone()),
+            message: None,
+        };
+        let f = Rfc5424Builder::new("32473", Facility::User).build();
+
+        let mut out = Vec::new();
+        f.format(&mut out, msg).unwrap();
+        let s = String::from_utf8(out).unwrap();
+        println!("{}", s);
+        assert_eq!(String::from_utf8(
+            test_vec(r#"<11>1 - - - - - [exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]"#, 
+                None)).unwrap(), s);
+
+        hmap.insert("examplePriority", vec![("class".into(), "high".into())]);
+        let msg2 = Rfc5424Message {
+            severity: Severity::Warning,
+            structured_data: Some(hmap),
+            message: None,
+        };
+
+        let mut out = Vec::new();
+        f.format(&mut out, msg2).unwrap();
+        let s = String::from_utf8(out).unwrap();
+        println!("{}", s);
+        assert_eq!(String::from_utf8(
+            test_vec(r#"<12>1 - - - - - [exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"][examplePriority@32473 class="high"]"#, 
+                None)).unwrap().len(), s.len());
     }
 }
