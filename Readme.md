@@ -1,4 +1,5 @@
 # `syslog5424` - trait based syslog 5424 message formatting
+[![crates.io badge](https://img.shields.io/crates/v/syslog5424.svg)](https://crates.io/crates/syslog5424)
 
 This crate provides a way for data to be formatted as an RFC5424 (or RFC5425) message and written to any type that implements `Write`. 
 Any type that implements the `Rfc5424Data` trait can be formatted.
