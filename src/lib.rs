@@ -7,7 +7,7 @@
 //!
 //! An example implementation of `Rfc5424Data` is in the `tests` module.
 //!
-//! There is also a [`slog`](https://github.com/slog-rs/slog) implementation here:
+//! There is also a [`slog`](https://github.com/slog-rs/slog) implementation here: [https://github.com/nocduro/slog-syslog5424](https://github.com/nocduro/slog-syslog5424)
 //!
 //! # Important details
 //! Some IANA reserved keywords are not implemented yet (`timeQuality`, and `meta`).

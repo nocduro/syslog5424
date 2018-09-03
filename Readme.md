@@ -7,7 +7,7 @@ Any type that implements the `Rfc5424Data` trait can be formatted.
 ## `slog` implementation
 This crate was originally made as a way to have `slog` format its log messages as rfc 5424.
 
-The implementation for that is here: 
+The implementation for that is here: https://github.com/nocduro/slog-syslog5424
 
 
 ## Example
@@ -68,6 +68,8 @@ fn main() {
 }
 ```
 
+## OS support
+Should work on any system where `std` is available, the OS specifics are introduced by the user when picking which `Writer` to use.
 
 ## License
 MIT (see LICENSE)
