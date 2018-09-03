@@ -263,6 +263,14 @@ impl Rfc5424 {
             log.push(']');
         }
 
+        if !self.iana_time_quality.is_empty() {
+            log.push_str("[timeQuality");
+            for val in &self.iana_time_quality {
+                log.push_str(&val.to_string());
+            }
+            log.push(']');
+        }
+
         message.structured_data().map(|sd| {
             sd.iter().for_each(|(id, pairs)| {
                 log.push('[');
