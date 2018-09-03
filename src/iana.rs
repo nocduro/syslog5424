@@ -101,7 +101,7 @@ impl fmt::Display for Origin {
 /// * Documentation text copied from: 
 /// [RFC5424 Section 7.1](https://tools.ietf.org/html/rfc5424#section-7.1)
 /// * No automatic bounds checking is currently done for these fields. 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum TimeQuality {
     /// The "tzKnown" parameter indicates whether the originator knows its
     /// time zone.  If it does, the value "1" MUST be used.  If the time zone

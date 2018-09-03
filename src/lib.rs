@@ -23,10 +23,8 @@
 //! connection should be over TLS. However, if sending to the local RSYSLOG the normal
 //! 5424 format is likely correct(?).
 
-#[deny(
-    missing_docs, unsafe_code, missing_copy_implementations, trivial_casts, trivial_numeric_casts,
-    unstable_features, unused_import_braces
-)]
+#![deny(unsafe_code, missing_copy_implementations, unused_import_braces)]
+
 use std::collections::HashMap;
 use std::io::{self, Write};
 
@@ -36,7 +34,7 @@ use iana::*;
 use types::*;
 
 /// Errors returned when verifying validity of metadata
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum Error {
     FieldEmpty,
     FieldTooLong,
