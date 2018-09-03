@@ -3,6 +3,8 @@
 This crate provides a way for data to be formatted as an RFC5424 (or RFC5425) message and written to any type that implements `Write`. 
 Any type that implements the `Rfc5424Data` trait can be formatted.
 
+## Documentation
+https://docs.rs/syslog5424
 
 ## `slog` implementation
 This crate was originally made as a way to have `slog` format its log messages as rfc 5424.
