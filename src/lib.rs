@@ -218,7 +218,7 @@ impl Rfc5424 {
     ///
     /// # Errors
     /// Errors when `writer` returns an error (`io::Error`)
-    pub fn format<W: Write>(&self, writer: &mut W, message: impl Rfc5424Data) -> io::Result<()> {
+    pub fn format<W: Write>(&self, writer: &mut W, message: &impl Rfc5424Data) -> io::Result<()> {
         let mut log = String::new();
 
         // - HEADER -
@@ -271,7 +271,7 @@ impl Rfc5424 {
             log.push(']');
         }
 
-        message.structured_data().map(|sd| {
+        if let Some(sd) = message.structured_data() {
             sd.iter().for_each(|(id, pairs)| {
                 log.push('[');
                 log.push_str(&remove_invalid(id));
@@ -287,7 +287,7 @@ impl Rfc5424 {
                 }
                 log.push(']');
             })
-        });
+        }
 
         // must use NILVALUE if we don't have any structured data
         if message.structured_data().is_none()
@@ -407,7 +407,7 @@ mod tests {
             .build();
 
         let mut out = Vec::new();
-        f.format(&mut out, msg).unwrap();
+        f.format(&mut out, &msg).unwrap();
         let s = String::from_utf8(out).unwrap();
         println!("{}", s);
         assert_eq!(String::from_utf8(
@@ -433,7 +433,7 @@ mod tests {
             .build();
 
         let mut out = Vec::new();
-        f.format(&mut out, msg).unwrap();
+        f.format(&mut out, &msg).unwrap();
         let s = String::from_utf8(out).unwrap();
         println!("{}", s);
         assert_eq!(
@@ -455,7 +455,7 @@ mod tests {
         let f = Rfc5424Builder::new("ent_id", Facility::User).build();
 
         let mut out = Vec::new();
-        f.format(&mut out, msg).unwrap();
+        f.format(&mut out, &msg).unwrap();
         let s = String::from_utf8(out).unwrap();
         println!("{}", s);
         assert_eq!(
@@ -484,7 +484,7 @@ mod tests {
         let f = Rfc5424Builder::new("32473", Facility::User).build();
 
         let mut out = Vec::new();
-        f.format(&mut out, msg).unwrap();
+        f.format(&mut out, &msg).unwrap();
         let s = String::from_utf8(out).unwrap();
         println!("{}", s);
         assert_eq!(String::from_utf8(
@@ -499,7 +499,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        f.format(&mut out, msg2).unwrap();
+        f.format(&mut out, &msg2).unwrap();
         let s = String::from_utf8(out).unwrap();
         println!("{}", s);
         assert_eq!(String::from_utf8(

@@ -3,7 +3,7 @@
 use {Error, NILVALUE};
 
 /// Syslog facility
-/// 
+///
 /// * [Definition in RFC5424 Section 6.2.1](https://tools.ietf.org/html/rfc5424#section-6.2.1)
 #[derive(Debug, Clone, Copy)]
 pub enum Facility {
@@ -40,7 +40,7 @@ impl Default for Facility {
 }
 
 /// Syslog severity
-/// 
+///
 /// * [Definition in RFC5424 Section 6.2.1](https://tools.ietf.org/html/rfc5424#section-6.2.1)
 /// * [Severity Values A.3.](https://tools.ietf.org/html/rfc5424#appendix-A.3)
 #[derive(Debug, Clone, Copy)]
@@ -130,7 +130,7 @@ impl Default for MessageId {
 /// * `value` is an empty string
 /// * `value` doesn't contain printable ASCII characters (see `char::is_ascii_graphic`)
 fn new_header_val(value: &str, max_length: usize) -> Result<String, Error> {
-    if value.len() == 0 {
+    if value.is_empty() {
         return Err(Error::FieldEmpty);
     }
     if !value.chars().all(|x| x.is_ascii_graphic()) {
