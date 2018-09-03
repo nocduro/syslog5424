@@ -3,11 +3,12 @@ name = "syslog5424"
 version = "0.1.0"
 authors = ["Mackenzie Hauck <mhauck@live.ca>"]
 
-[features]
-default = []
-slog-impl = ["chrono", "slog"]
+description = "A trait based RFC5424 syslog formatter"
 
-[dependencies]
-chrono = { version = "0.4", optional = true }
-slog = { version = "2.3", optional = true }
+homepage = "https://github.com/nocduro/syslog5424"
+repository = "https://github.com/nocduro/syslog5424"
 
+readme = "Readme.md"
+keywords = ["syslog", "rfc5424", "5424", "logging", "5425"]
+categories = ["encoding", "development-tools::debugging"]
+license = "MIT"
