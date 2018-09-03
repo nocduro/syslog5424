@@ -65,7 +65,7 @@ fn main() {
 
     // run the formatter
     let mut out = Vec::new();
-    formatter.format(&mut out, msg).unwrap();
+    formatter.format(&mut out, &msg).unwrap();
     println!("log: {}", String::from_utf8(out).unwrap());
 }
 ```
