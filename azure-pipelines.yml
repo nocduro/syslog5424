@@ -1,20 +1,15 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 pool:
   vmImage: 'Ubuntu 16.04'
 
+resources:
+- repo: self
+queue:
+  name: Hosted Ubuntu 1604
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: spontoreau.rust-vsts.rust-install.Rust@1
+  displayName: 'Rust Tool Installer'
 
-- script: |
-    curl https://sh.rustup.rs -sSf | sh -s -- -y
-  displayName: 'Install Rust'
-
-- script: |
-    cd syslog5424
-    cargo test --verbose
-  displayName: 'Run tests'
+- task: spontoreau.rust-vsts.rust-cargo.Cargo@1
+  displayName: Cargo
+  inputs:
+    cargoCommand: test
