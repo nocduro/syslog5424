@@ -1,4 +1,6 @@
 # `syslog5424` - trait based syslog 5424 message formatting
+[![Build Status](https://dev.azure.com/nocduro/syslog5424/_apis/build/status/nocduro.syslog5424)](https://dev.azure.com/nocduro/syslog5424/_build/latest?definitionId=3)
+[![crates.io badge](https://img.shields.io/crates/v/syslog5424.svg)](https://crates.io/crates/syslog5424)
 
 This crate provides a way for data to be formatted as an RFC5424 (or RFC5425) message and written to any type that implements `Write`. 
 Any type that implements the `Rfc5424Data` trait can be formatted.
@@ -65,7 +67,7 @@ fn main() {
 
     // run the formatter
     let mut out = Vec::new();
-    formatter.format(&mut out, msg).unwrap();
+    formatter.format(&mut out, &msg).unwrap();
     println!("log: {}", String::from_utf8(out).unwrap());
 }
 ```

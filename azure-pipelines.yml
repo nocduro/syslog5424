@@ -1,0 +1,12 @@
+resources:
+- repo: self
+queue:
+  name: Hosted Ubuntu 1604
+steps:
+- task: spontoreau.rust-vsts.rust-install.Rust@1
+  displayName: 'Rust Tool Installer'
+
+- task: spontoreau.rust-vsts.rust-cargo.Cargo@1
+  displayName: Cargo
+  inputs:
+    cargoCommand: test
