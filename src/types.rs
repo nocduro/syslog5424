@@ -145,8 +145,8 @@ fn new_header_val(value: &str, max_length: usize) -> Result<String, Error> {
 /// Escape the `val` parameter according to PARAM-VALUE rule from RFC5424.
 #[inline]
 pub fn escape_val(val: &str) -> String {
-    val.replace('"', r#"\""#)
-        .replace('\\', r#"\\"#)
+    val.replace('\\', r#"\\"#)
+        .replace('"', r#"\""#)
         .replace(']', r#"\]"#)
 }
 
