@@ -1,3 +1,6 @@
+# ⚠This crate will not be maintained or updated⚠
+I no longer use syslog for my logging, I recommend trying out `tracing` or `opentelemetry` instead
+
 # `syslog5424` - trait based syslog 5424 message formatting
 [![Build Status](https://dev.azure.com/nocduro/syslog5424/_apis/build/status/nocduro.syslog5424)](https://dev.azure.com/nocduro/syslog5424/_build/latest?definitionId=3)
 [![crates.io badge](https://img.shields.io/crates/v/syslog5424.svg)](https://crates.io/crates/syslog5424)
